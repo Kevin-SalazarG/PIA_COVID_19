@@ -36,9 +36,9 @@ class CountryCovidData:
             for key in important_keys:
                 value1 = data1.get(key, "Datos no disponibles")
                 value2 = data2.get(key, "Datos no disponibles")
-                print(f"{key.replace('_', ' ').title()}:")
-                print(f"{data1['country']}: {value1}")
-                print(f"{data2['country']}: {value2}")
+                print(f"{TextColor.YELLOW}{key.replace('_', ' ').title()}:")
+                print(f"{TextColor.WHITE}{data1['country']}: {TextColor.GREEN if key != 'tests' else TextColor.LIGHT_BLUE}{value1}")
+                print(f"{TextColor.WHITE}{data2['country']}: {TextColor.GREEN if key != 'tests' else TextColor.LIGHT_BLUE}{value2}")
                 if key == "cases":
                     self._compare_population_ratio(data1, data2)
                 print()
@@ -51,8 +51,8 @@ class CountryCovidData:
         if country1_population and country2_population:
             ratio1 = data1["cases"] / country1_population
             ratio2 = data2["cases"] / country2_population
-            print(f"{data1['country']} tiene {ratio1:.5f} casos por persona.")
-            print(f"{data2['country']} tiene {ratio2:.5f} casos por persona.")
+            print(f"{TextColor.WHITE}{data1['country']} tiene {TextColor.GREEN if ratio1 < ratio2 else TextColor.RED}{ratio1:.5f} casos por persona.")
+            print(f"{TextColor.WHITE}{data2['country']} tiene {TextColor.GREEN if ratio2 < ratio1 else TextColor.RED}{ratio2:.5f} casos por persona.")
         else:
             print(TextColor.YELLOW + "No se pudieron obtener los datos de población para comparar la tasa de casos por persona." + TextColor.RESET)
 
@@ -64,9 +64,9 @@ class CountryCovidData:
             return
 
         excel_handler = ExcelHandler(filename)
-        excel_handler.create_sheet(f"Comparación {country1} vs {country2}")
+        excel_handler.create_sheet(f"Comparación {data1['country']} vs {data2['country']}")
 
-        headers = ["Dato", country1, country2]
+        headers = ["Dato", data1['country'], data2['country']]
         excel_handler.add_headers(headers)
 
         important_keys = ["cases", "deaths", "recovered", "active", "tests", "population"]
